@@ -46,5 +46,5 @@ defmodule Yatzy do
       %{ result: "Alice won." }
 
   """
-  def end_game(_game_state), do: %{ result: "Alice won." }
+  def end_game(_game_state), do: %{result: "Alice won."}
 end
