@@ -6,6 +6,7 @@ defmodule Yatzy.MixProject do
       app: :yatzy,
       version: "0.1.0",
       elixir: "~> 1.10",
+      elixirc_options: [warning_as_errors: true],
       start_permanent: Mix.env() == :prod,
       deps: deps()
     ]
