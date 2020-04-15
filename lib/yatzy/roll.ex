@@ -27,8 +27,8 @@ defmodule Yatzy.Roll do
   Rolls the dice
   """
 
-  @spec roll(opts :: args()) :: t()
-  def roll(opts \\ []) do
+  @spec execute(opts :: args()) :: t()
+  def execute(opts \\ []) do
     counter = Keyword.get(opts, :counter, 0)
     dice = Keyword.get(opts, :dice, [])
     random = Keyword.get(opts, :random, &:rand.uniform/1)
