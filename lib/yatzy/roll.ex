@@ -1,4 +1,11 @@
 defmodule Yatzy.Roll do
+  @moduledoc """
+  - Generating new rolls
+  - Rerolling all dice
+  - Rerolling some dice
+  - Enforcing game rules around re-rolls
+  """
+
   @dice_count 5
   @dice_indexes 1..@dice_count
   @die_faces 6
