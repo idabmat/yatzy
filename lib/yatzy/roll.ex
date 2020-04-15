@@ -12,20 +12,21 @@ defmodule Yatzy.Roll do
   @max_rolls 3
 
   @type t :: %{
-    counter: integer(),
-    dice: [integer()]
-  }
+          counter: integer(),
+          dice: [integer()]
+        }
 
   @type args :: [
-    counter: integer(),
-    dice: [integer()],
-    random: fun(),
-    reroll: [integer()]
-  ]
+          counter: integer(),
+          dice: [integer()],
+          random: fun(),
+          reroll: [integer()]
+        ]
 
   @doc """
   Rolls the dice
   """
+
   @spec roll(opts :: args()) :: t()
   def roll(opts \\ []) do
     counter = Keyword.get(opts, :counter, 0)
@@ -34,8 +35,12 @@ defmodule Yatzy.Roll do
     reroll = Keyword.get(opts, :reroll, @dice_indexes)
 
     cond do
-      !valid?(reroll) -> %{dice: dice, counter: counter}
-      limit_reached?(counter) -> %{dice: dice, counter: counter}
+      !valid?(reroll) ->
+        %{dice: dice, counter: counter}
+
+      limit_reached?(counter) ->
+        %{dice: dice, counter: counter}
+
       true ->
         new_dice = rerolled(dice, reroll, random) |> Enum.sort()
         %{dice: new_dice, counter: counter + 1}
@@ -59,7 +64,8 @@ defmodule Yatzy.Roll do
   @spec reroll?(reroll :: [integer()], pos :: integer()) :: boolean()
   defp reroll?(reroll, pos), do: Enum.member?(reroll, pos)
 
-  @spec reroll(pos :: integer(), dice :: [integer()], random :: fun(), rerollable :: boolean()) :: integer()
+  @spec reroll(pos :: integer(), dice :: [integer()], random :: fun(), rerollable :: boolean()) ::
+          integer()
   defp reroll(pos, dice, _random, false), do: Enum.at(dice, pos - 1)
   defp reroll(_pos, _dice, random, _rerollable), do: random.(@die_faces)
 end
