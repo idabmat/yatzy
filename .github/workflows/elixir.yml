@@ -62,6 +62,8 @@ jobs:
           ${{ runner.os }}-deps-${{ env.cache-name }}-${{ hashFiles('mix.lock') }}
           ${{ runner.os }}-deps-${{ env.cache-name }}-
           ${{ runner.os }}-deps-
+    - name: Install Dependencies
+      run: mix deps.get
     - name: Cache build directory
       uses: actions/cache@v1
       env:
@@ -95,6 +97,8 @@ jobs:
           ${{ runner.os }}-deps-${{ env.cache-name }}-${{ hashFiles('mix.lock') }}
           ${{ runner.os }}-deps-${{ env.cache-name }}-
           ${{ runner.os }}-deps-
+    - name: Install Dependencies
+      run: mix deps.get
     - name: Cache build directory
       uses: actions/cache@v1
       env:
@@ -128,6 +132,8 @@ jobs:
           ${{ runner.os }}-deps-${{ env.cache-name }}-${{ hashFiles('mix.lock') }}
           ${{ runner.os }}-deps-${{ env.cache-name }}-
           ${{ runner.os }}-deps-
+    - name: Install Dependencies
+      run: mix deps.get
     - name: Cache build directory
       uses: actions/cache@v1
       env:
@@ -161,6 +167,8 @@ jobs:
           ${{ runner.os }}-deps-${{ env.cache-name }}-${{ hashFiles('mix.lock') }}
           ${{ runner.os }}-deps-${{ env.cache-name }}-
           ${{ runner.os }}-deps-
+    - name: Install Dependencies
+      run: mix deps.get
     - name: Cache dialyzer directory
       uses: actions/cache@v1
       env:
