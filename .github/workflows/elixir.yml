@@ -23,7 +23,7 @@ jobs:
       env:
         cache-name: cache-deps-directory
       with:
-        path: ~/deps
+        path: deps
         key: ${{ runner.os }}-deps-${{ env.cache-name }}-${{ hashFiles('mix.lock') }}
         restore-keys: |
           ${{ runner.os }}-deps-${{ env.cache-name }}-
@@ -35,7 +35,7 @@ jobs:
       env:
         cache-name: cache-build-directory
       with:
-        path: ~/_build
+        path: _build
         key: ${{ runner.os }}-build-${{ env.cache-name }}
         restore-keys: |
           ${{ runner.os }}-build-
