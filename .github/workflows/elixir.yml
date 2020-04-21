@@ -8,9 +8,7 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
     - name: Setup elixir
@@ -26,6 +24,7 @@ jobs:
         path: deps
         key: ${{ runner.os }}-deps-${{ env.cache-name }}-${{ hashFiles('mix.lock') }}
         restore-keys: |
+          ${{ runner.os }}-deps-${{ env.cache-name }}-${{ hashFiles('mix.lock') }}
           ${{ runner.os }}-deps-${{ env.cache-name }}-
           ${{ runner.os }}-deps-
     - name: Install Dependencies
@@ -38,14 +37,139 @@ jobs:
         path: _build
         key: ${{ runner.os }}-build-${{ env.cache-name }}
         restore-keys: |
+          ${{ runner.os }}-build-${{ env.cache-name }}
           ${{ runner.os }}-build-
     - name: Compile
       run: mix compile
+  lint:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup elixir
+      uses: actions/setup-elixir@v1
+      with:
+        elixir-version: 1.10.2
+        otp-version: 22.2
+    - name: Cache dependencies directory
+      uses: actions/cache@v1
+      env:
+        cache-name: cache-deps-directory
+      with:
+        path: deps
+        key: ${{ runner.os }}-deps-${{ env.cache-name }}-${{ hashFiles('mix.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-deps-${{ env.cache-name }}-${{ hashFiles('mix.lock') }}
+          ${{ runner.os }}-deps-${{ env.cache-name }}-
+          ${{ runner.os }}-deps-
+    - name: Cache build directory
+      uses: actions/cache@v1
+      env:
+        cache-name: cache-build-directory
+      with:
+        path: _build
+        key: ${{ runner.os }}-build-${{ env.cache-name }}
+        restore-keys: |
+          ${{ runner.os }}-build-${{ env.cache-name }}
+          ${{ runner.os }}-build-
     - name: Check Format
       run: mix format --check-formatted
+  credo:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup elixir
+      uses: actions/setup-elixir@v1
+      with:
+        elixir-version: 1.10.2
+        otp-version: 22.2
+    - name: Cache dependencies directory
+      uses: actions/cache@v1
+      env:
+        cache-name: cache-deps-directory
+      with:
+        path: deps
+        key: ${{ runner.os }}-deps-${{ env.cache-name }}-${{ hashFiles('mix.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-deps-${{ env.cache-name }}-${{ hashFiles('mix.lock') }}
+          ${{ runner.os }}-deps-${{ env.cache-name }}-
+          ${{ runner.os }}-deps-
+    - name: Cache build directory
+      uses: actions/cache@v1
+      env:
+        cache-name: cache-build-directory
+      with:
+        path: _build
+        key: ${{ runner.os }}-build-${{ env.cache-name }}
+        restore-keys: |
+          ${{ runner.os }}-build-${{ env.cache-name }}
+          ${{ runner.os }}-build-
     - name: Check Style
       run: mix credo --strict
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup elixir
+      uses: actions/setup-elixir@v1
+      with:
+        elixir-version: 1.10.2
+        otp-version: 22.2
+    - name: Cache dependencies directory
+      uses: actions/cache@v1
+      env:
+        cache-name: cache-deps-directory
+      with:
+        path: deps
+        key: ${{ runner.os }}-deps-${{ env.cache-name }}-${{ hashFiles('mix.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-deps-${{ env.cache-name }}-${{ hashFiles('mix.lock') }}
+          ${{ runner.os }}-deps-${{ env.cache-name }}-
+          ${{ runner.os }}-deps-
+    - name: Cache build directory
+      uses: actions/cache@v1
+      env:
+        cache-name: cache-build-directory
+      with:
+        path: _build
+        key: ${{ runner.os }}-build-${{ env.cache-name }}
+        restore-keys: |
+          ${{ runner.os }}-build-${{ env.cache-name }}
+          ${{ runner.os }}-build-
     - name: Run Tests
       run: mix test
+  type_check:
+    runs-on: ubuntu-latest
+    needs: [lint, credo, test]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup elixir
+      uses: actions/setup-elixir@v1
+      with:
+        elixir-version: 1.10.2
+        otp-version: 22.2
+    - name: Cache dependencies directory
+      uses: actions/cache@v1
+      env:
+        cache-name: cache-deps-directory
+      with:
+        path: deps
+        key: ${{ runner.os }}-deps-${{ env.cache-name }}-${{ hashFiles('mix.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-deps-${{ env.cache-name }}-${{ hashFiles('mix.lock') }}
+          ${{ runner.os }}-deps-${{ env.cache-name }}-
+          ${{ runner.os }}-deps-
+    - name: Cache dialyzer directory
+      uses: actions/cache@v1
+      env:
+        cache-name: cache-dialyzer-directory
+      with:
+        path: _build
+        key: ${{ runner.os }}-dialyzer-${{ env.cache-name }}
+        restore-keys: |
+          ${{ runner.os }}-dialyzer-${{ env.cache-name }}
+          ${{ runner.os }}-dialyzer-
     - name: Check Types
       run: mix dialyzer --halt-exit-status
