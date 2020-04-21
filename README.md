@@ -1,3 +1,4 @@
+![Elixir CI](https://github.com/idabmat/yatzy/workflows/Elixir%20CI/badge.svg)
 # Yatzy
 
 **TODO: Add description**
