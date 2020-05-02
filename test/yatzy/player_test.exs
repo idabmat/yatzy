@@ -10,12 +10,6 @@ defmodule Yatzy.PlayerTest do
     assert Player.new("Alice") == %Player{name: "Alice", sheet: %Sheet{}, current_roll: %Roll{}}
   end
 
-  test "creating a user without a name" do
-    assert_raise ArgumentError, fn ->
-      Player.new("")
-    end
-  end
-
   test "rolling the dice" do
     %Player{current_roll: roll} = Player.new("Alice") |> Player.roll()
     assert roll.counter == 1

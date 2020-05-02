@@ -23,7 +23,6 @@ defmodule Yatzy.Player do
 
   """
   @spec new(name :: String.t()) :: t()
-  def new(""), do: raise(ArgumentError, "Please specify a name")
   def new(name), do: %__MODULE__{name: name}
 
   @doc """
