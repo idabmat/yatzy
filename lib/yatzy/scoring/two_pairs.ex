@@ -11,7 +11,7 @@ defmodule Yatzy.Scoring.TwoPairs do
     score: "Sum of dice in those two pairs."
   ]
 
-  defimpl Yatzy.Score do
+  defimpl Yatzy.Scoring.Score do
     def execute(%{roll: roll}) do
       roll
       |> Enum.sort()

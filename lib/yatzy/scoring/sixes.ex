@@ -6,7 +6,7 @@ defmodule Yatzy.Scoring.Sixes do
   @enforce_keys [:roll]
   defstruct [:roll, name: "Sixes", description: "The sum of all dice showind the number 6."]
 
-  defimpl Yatzy.Score do
+  defimpl Yatzy.Scoring.Score do
     def execute(%{roll: roll}), do: Yatzy.Scoring.count(roll, 6)
   end
 end

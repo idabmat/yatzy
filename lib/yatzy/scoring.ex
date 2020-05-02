@@ -40,11 +40,21 @@ defmodule Yatzy.Scoring do
 
   @spec are_equal([integer()]) :: boolean()
   defp are_equal(list), do: are_equal(list, true)
+
   defp are_equal([], result), do: result
   defp are_equal([head | tail], result), do: are_equal(tail, result, head)
+
   defp are_equal([], result, _), do: result
 
-  defp are_equal([head | tail], result, value) do
-    are_equal(tail, result && head == value, value)
+  defp are_equal([head | tail], result, value),
+    do: are_equal(tail, result && head == value, value)
+
+  defprotocol Score do
+    @fallback_to_any true
+    def execute(_rule)
+  end
+
+  defimpl Score, for: Any do
+    def execute(_rule), do: 0
   end
 end

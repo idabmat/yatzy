@@ -23,7 +23,8 @@ defmodule Yatzy.MixProject do
   defp deps do
     [
       {:credo, "~> 1.3", only: [:dev], runtime: false},
-      {:dialyxir, "~> 1.0", only: [:dev], runtime: false}
+      {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
+      {:typed_struct, "~> 0.1.4"}
     ]
   end
 end

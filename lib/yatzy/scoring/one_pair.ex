@@ -11,7 +11,7 @@ defmodule Yatzy.Scoring.OnePair do
     score: "Sum of those two dice."
   ]
 
-  defimpl Yatzy.Score do
+  defimpl Yatzy.Scoring.Score do
     def execute(%{roll: roll}), do: Yatzy.Scoring.chunk_by(roll, 2)
   end
 end

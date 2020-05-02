@@ -11,7 +11,7 @@ defmodule Yatzy.Scoring.Yatzy do
     score: "50 points."
   ]
 
-  defimpl Yatzy.Score do
+  defimpl Yatzy.Scoring.Score do
     def execute(%{roll: roll}), do: tally(roll)
 
     defp tally([die, die, die, die, die]), do: 50

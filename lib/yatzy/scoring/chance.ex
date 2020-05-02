@@ -11,7 +11,7 @@ defmodule Yatzy.Scoring.Chance do
     score: "Sum of all the dice."
   ]
 
-  defimpl Yatzy.Score do
+  defimpl Yatzy.Scoring.Score do
     def execute(%{roll: roll}), do: Enum.sum(roll)
   end
 end

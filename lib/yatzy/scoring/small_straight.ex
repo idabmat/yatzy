@@ -11,7 +11,7 @@ defmodule Yatzy.Scoring.SmallStraight do
     score: "15 points (sum of all the dice)."
   ]
 
-  defimpl Yatzy.Score do
+  defimpl Yatzy.Scoring.Score do
     def execute(%{roll: roll}) do
       roll
       |> Enum.sort()

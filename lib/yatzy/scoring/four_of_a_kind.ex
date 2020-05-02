@@ -11,7 +11,7 @@ defmodule Yatzy.Scoring.FourOfAKind do
     score: "Sum of those four dice."
   ]
 
-  defimpl Yatzy.Score do
+  defimpl Yatzy.Scoring.Score do
     def execute(%{roll: roll}), do: Yatzy.Scoring.chunk_by(roll, 4)
   end
 end
