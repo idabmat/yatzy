@@ -11,14 +11,14 @@ defmodule Yatzy.Roll do
   @die_faces 6
   @max_rolls 3
 
-  @type t :: %{
-          counter: integer(),
-          dice: [integer()]
-        }
+  use TypedStruct
 
-  @type args :: [
-          counter: integer(),
-          dice: [integer()],
+  typedstruct do
+    field :counter, integer(), default: 0
+    field :dice, [integer()], default: []
+  end
+
+  @type options :: [
           random: fun(),
           reroll: [integer()]
         ]
@@ -27,23 +27,23 @@ defmodule Yatzy.Roll do
   Rolls the dice
   """
 
-  @spec execute(opts :: args()) :: t()
-  def execute(opts \\ []) do
-    counter = Keyword.get(opts, :counter, 0)
-    dice = Keyword.get(opts, :dice, [])
+  @spec execute(roll :: t(), opts :: options()) :: t()
+  def execute(roll, opts \\ []) do
+    counter = roll.counter
+    dice = roll.dice
     random = Keyword.get(opts, :random, &:rand.uniform/1)
     reroll = Keyword.get(opts, :reroll, @dice_indexes)
 
     cond do
       !valid?(reroll) ->
-        %{dice: dice, counter: counter}
+        %__MODULE__{dice: dice, counter: counter}
 
       limit_reached?(counter) ->
-        %{dice: dice, counter: counter}
+        %__MODULE__{dice: dice, counter: counter}
 
       true ->
         new_dice = rerolled(dice, reroll, random) |> Enum.sort()
-        %{dice: new_dice, counter: counter + 1}
+        %__MODULE__{dice: new_dice, counter: counter + 1}
     end
   end
 

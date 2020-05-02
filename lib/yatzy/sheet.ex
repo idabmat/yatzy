@@ -1,4 +1,5 @@
 defmodule Yatzy.Sheet do
+  alias Yatzy.Roll
   alias Yatzy.Scoring.Score
 
   @moduledoc """
@@ -23,20 +24,20 @@ defmodule Yatzy.Sheet do
   use TypedStruct
 
   typedstruct do
-    field :ones, struct(), default: %Yatzy.Scoring.Ones{roll: []}
-    field :twos, struct(), default: %Yatzy.Scoring.Twos{roll: []}
-    field :threes, struct(), default: %Yatzy.Scoring.Threes{roll: []}
-    field :fours, struct(), default: %Yatzy.Scoring.Fours{roll: []}
-    field :fives, struct(), default: %Yatzy.Scoring.Fives{roll: []}
-    field :sixes, struct(), default: %Yatzy.Scoring.Sixes{roll: []}
-    field :one_pair, struct(), default: %Yatzy.Scoring.OnePair{roll: []}
-    field :two_pair, struct(), default: %Yatzy.Scoring.TwoPairs{roll: []}
-    field :three_of_a_kind, struct(), default: %Yatzy.Scoring.ThreeOfAKind{roll: []}
-    field :four_of_a_kind, struct(), default: %Yatzy.Scoring.FourOfAKind{roll: []}
-    field :small_straight, struct(), default: %Yatzy.Scoring.SmallStraight{roll: []}
-    field :large_straight, struct(), default: %Yatzy.Scoring.LargeStraight{roll: []}
-    field :chance, struct(), default: %Yatzy.Scoring.Chance{roll: []}
-    field :yatzy, struct(), default: %Yatzy.Scoring.Yatzy{roll: []}
+    field :ones, struct(), default: %Yatzy.Scoring.Ones{}
+    field :twos, struct(), default: %Yatzy.Scoring.Twos{}
+    field :threes, struct(), default: %Yatzy.Scoring.Threes{}
+    field :fours, struct(), default: %Yatzy.Scoring.Fours{}
+    field :fives, struct(), default: %Yatzy.Scoring.Fives{}
+    field :sixes, struct(), default: %Yatzy.Scoring.Sixes{}
+    field :one_pair, struct(), default: %Yatzy.Scoring.OnePair{}
+    field :two_pair, struct(), default: %Yatzy.Scoring.TwoPairs{}
+    field :three_of_a_kind, struct(), default: %Yatzy.Scoring.ThreeOfAKind{}
+    field :four_of_a_kind, struct(), default: %Yatzy.Scoring.FourOfAKind{}
+    field :small_straight, struct(), default: %Yatzy.Scoring.SmallStraight{}
+    field :large_straight, struct(), default: %Yatzy.Scoring.LargeStraight{}
+    field :chance, struct(), default: %Yatzy.Scoring.Chance{}
+    field :yatzy, struct(), default: %Yatzy.Scoring.Yatzy{}
   end
 
   @doc """
@@ -60,14 +61,13 @@ defmodule Yatzy.Sheet do
   @doc """
   Update the score sheet with a roll under a rule.
 
-
   ## Example
 
-      iex> Yatzy.Sheet.record(%Yatzy.Sheet{}, [1, 1, 1, 1, 1], :ones) |> Yatzy.Sheet.total()
+      iex> Yatzy.Sheet.record(%Yatzy.Sheet{}, %Yatzy.Roll{dice: [1, 1, 1, 1, 1]}, :ones) |> Yatzy.Sheet.total()
       5
 
   """
-  @spec record(sheet :: t(), roll :: [integer()], rule :: atom()) :: t()
+  @spec record(sheet :: t(), roll :: Roll.t(), rule :: atom()) :: t()
   def record(sheet, roll, rule) do
     if valid_rule(sheet, rule) do
       Map.update!(sheet, rule, fn score -> update_roll(score, roll) end)
@@ -76,7 +76,7 @@ defmodule Yatzy.Sheet do
     end
   end
 
-  defp update_roll(score = %{roll: []}, roll), do: %{score | roll: roll}
+  defp update_roll(score = %{roll: %Roll{dice: []}}, roll), do: %{score | roll: roll}
   defp update_roll(score, _), do: score
 
   defp valid_rule(sheet, rule) do

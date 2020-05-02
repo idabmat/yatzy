@@ -3,17 +3,16 @@ defmodule Yatzy.Scoring.TwoPairs do
   Two Pairs: Two different pairs of dice. Score: Sum of dice in those two pairs.
   """
 
-  @enforce_keys [:roll]
-  defstruct [
-    :roll,
-    name: "Two Pairs",
-    description: "Two different pairs of dice.",
-    score: "Sum of dice in those two pairs."
-  ]
+  alias Yatzy.Roll
+
+  defstruct roll: %Roll{},
+            name: "Two Pairs",
+            description: "Two different pairs of dice.",
+            score: "Sum of dice in those two pairs."
 
   defimpl Yatzy.Scoring.Score do
     def execute(%{roll: roll}) do
-      roll
+      roll.dice
       |> Enum.sort()
       |> Stream.chunk_every(2, 1, :discard)
       |> Stream.filter(&is_a_pair/1)

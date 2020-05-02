@@ -3,10 +3,13 @@ defmodule Yatzy.Scoring.Fives do
   Fives: The sum of all dice showing the number 5.
   """
 
-  @enforce_keys [:roll]
-  defstruct [:roll, name: "Fives", description: "The sum of all dice showind the number 5."]
+  alias Yatzy.Roll
+
+  defstruct roll: %Roll{},
+            name: "Fives",
+            description: "The sum of all dice showind the number 5."
 
   defimpl Yatzy.Scoring.Score do
-    def execute(%{roll: roll}), do: Yatzy.Scoring.count(roll, 5)
+    def execute(%{roll: roll}), do: Yatzy.Scoring.count(roll.dice, 5)
   end
 end
