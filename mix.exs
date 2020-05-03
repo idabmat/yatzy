@@ -4,11 +4,15 @@ defmodule Yatzy.MixProject do
   def project do
     [
       app: :yatzy,
-      version: "0.1.0",
+      version: "1.0.0",
+      description: "A Yatzy game engine",
+      package: package(),
       elixir: "~> 1.10",
       elixirc_options: [warning_as_errors: true],
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      source_url: "https://github.com/idabmat/yatzy",
+      homepage_url: "https://github.com/idabmat/yatzy"
     ]
   end
 
@@ -25,6 +29,14 @@ defmodule Yatzy.MixProject do
       {:credo, "~> 1.3", only: [:dev], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
       {:typed_struct, "~> 0.1.4"}
+    ]
+  end
+
+  defp package do
+    [
+      licenses: ["MIT"],
+      maintainers: ["igor@talimhq.com"],
+      links: %{"GitHub" => "https://github.com/idabmat/yatzy"}
     ]
   end
 end
