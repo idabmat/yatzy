@@ -3,6 +3,7 @@ defmodule Yatzy.GameTest do
 
   alias Yatzy.Game
   alias Yatzy.Player
+  alias Yatzy.Result
   alias Yatzy.Roll
 
   doctest Game
@@ -14,37 +15,34 @@ defmodule Yatzy.GameTest do
   end
 
   test "creating a game a single player game" do
-    game = Game.new(["Alice"])
-    assert %{"Alice" => %Player{name: "Alice"}} = game.players
-    assert game.current_player == "Alice"
+    assert %Game{
+             players: %{"Alice" => %Player{name: "Alice"}},
+             current_player: "Alice",
+             result: :pending
+           } = Game.new(["Alice"])
   end
 
   test "creating a multi player game" do
-    game = Game.new(["Alice", "Bob"], initial_player: "Bob")
-    assert %{"Alice" => %Player{name: "Alice"}, "Bob" => %Player{name: "Bob"}} = game.players
-    assert game.current_player == "Bob"
+    assert %Game{
+             players: %{"Alice" => %Player{name: "Alice"}, "Bob" => %Player{name: "Bob"}},
+             current_player: "Bob",
+             result: :pending
+           } = Game.new(["Alice", "Bob"], initial_player: "Bob")
   end
 
   test "creating a game with duplicate player names" do
-    assert_raise ArgumentError, fn ->
-      Game.new(["Alice", "Bob", "Alice"])
-    end
+    assert_raise ArgumentError, fn -> Game.new(["Alice", "Bob", "Alice"]) end
   end
 
   test "creating a game with blank player names" do
-    assert_raise ArgumentError, fn ->
-      Game.new([" ", "Alice"])
-    end
+    assert_raise ArgumentError, fn -> Game.new([" ", "Alice"]) end
   end
 
   test "rolling as the current player" do
-    %Game{players: %{"Alice" => alice}} =
-      Game.new(["Alice"])
-      |> Game.roll("Alice")
+    game = Game.new(["Alice"]) |> Game.roll("Alice")
 
-    %Roll{dice: dice, counter: counter} = alice.current_roll
-    assert dice != []
-    assert counter == 1
+    assert %Roll{dice: dice, counter: 1} = game.players["Alice"].current_roll
+    assert length(dice) > 0
   end
 
   test "rolling as a non existing player" do
@@ -55,6 +53,11 @@ defmodule Yatzy.GameTest do
   test "rolling out of turn" do
     game = Game.new(["Alice", "Bob"], initial_player: "Alice")
     assert Game.roll(game, "Bob") == game
+  end
+
+  test "rolling a finished game" do
+    game = Game.new(["Alice", "Bob"], initial_player: "Alice") |> Game.finish()
+    assert Game.roll(game, "Alice") == game
   end
 
   test "rerolling dice" do
@@ -71,7 +74,7 @@ defmodule Yatzy.GameTest do
       Game.new(["Alice", "Bob"], initial_player: "Alice")
       |> Game.save("Alice", :ones)
 
-    assert %Game{current_player: "Alice"} = game
+    assert game.current_player == "Alice"
   end
 
   test "saving with a roll" do
@@ -82,7 +85,8 @@ defmodule Yatzy.GameTest do
 
     assert %Game{
              current_player: "Bob",
-             players: %{"Alice" => %Player{current_roll: %Roll{counter: 0}}}
+             players: %{"Alice" => %Player{name: "Alice", current_roll: %Roll{counter: 0}}},
+             result: :pending
            } = game
   end
 
@@ -94,7 +98,8 @@ defmodule Yatzy.GameTest do
 
     assert %Game{
              current_player: "Alice",
-             players: %{"Charlie" => %Player{current_roll: %Roll{counter: 0}}}
+             players: %{"Charlie" => %Player{name: "Charlie", current_roll: %Roll{counter: 0}}},
+             result: :pending
            } = game
   end
 
@@ -106,8 +111,33 @@ defmodule Yatzy.GameTest do
 
     assert %Game{
              current_player: "Alice",
-             players: %{"Alice" => %Player{current_roll: %Roll{counter: 1}}}
+             players: %{"Alice" => %Player{name: "Alice", current_roll: %Roll{counter: 1}}},
+             result: :pending
            } = game
+  end
+
+  test "saving a finished game" do
+    game =
+      Game.new(["Alice", "Bob"], initial_player: "Alice")
+      |> Game.roll("Alice", random: &roll_ones/1)
+      |> Game.finish()
+      |> Game.save("Alice", :ones)
+
+    assert %Game{
+             current_player: "Alice",
+             players: %{
+               "Alice" => %Player{
+                 name: "Alice",
+                 current_roll: %Roll{counter: 1, dice: [1, 1, 1, 1, 1]}
+               }
+             },
+             result: %Result{winners: ["Alice", "Bob"], type: :draw, status: :aborted}
+           } = game
+  end
+
+  test "finishing a game" do
+    game = Game.new(["Alice"]) |> Game.finish()
+    assert %Result{winners: ["Alice"], type: :win, status: :aborted} == game.result
   end
 
   defp roll_ones(_), do: 1

@@ -9,7 +9,7 @@ defmodule Yatzy.SheetTest do
   end
 
   test "record a score" do
-    roll = %Roll{dice: [1, 1, 1, 4, 5]}
+    roll = %Roll{dice: [1, 1, 1, 4, 5], counter: 1}
 
     total =
       %Sheet{}
@@ -20,8 +20,8 @@ defmodule Yatzy.SheetTest do
   end
 
   test "attempt to overwrite a score" do
-    first_roll = %Roll{dice: [1, 2, 3, 4, 5]}
-    second_roll = %Roll{dice: [1, 1, 3, 4, 5]}
+    first_roll = %Roll{dice: [1, 2, 3, 4, 5], counter: 1}
+    second_roll = %Roll{dice: [1, 1, 3, 4, 5], counter: 1}
 
     total =
       %Sheet{}
@@ -33,20 +33,20 @@ defmodule Yatzy.SheetTest do
   end
 
   test "attempt to record on a non-existent rule" do
-    roll = %Roll{dice: [1, 2, 3, 4, 5]}
+    roll = %Roll{dice: [1, 2, 3, 4, 5], counter: 1}
 
-    total =
+    sheet =
       %Sheet{}
       |> Sheet.record(roll, :foo_bar)
-      |> Sheet.total()
 
-    assert total == 0
+    assert Sheet.total(sheet) == 0
+    refute Sheet.completed?(sheet)
   end
 
   test "completing the upper section" do
-    roll = %Roll{dice: [1, 2, 3, 4, 5]}
+    roll = %Roll{dice: [1, 2, 3, 4, 5], counter: 1}
 
-    total =
+    sheet =
       %Sheet{}
       |> Sheet.record(roll, :ones)
       |> Sheet.record(roll, :twos)
@@ -54,29 +54,29 @@ defmodule Yatzy.SheetTest do
       |> Sheet.record(roll, :fours)
       |> Sheet.record(roll, :fives)
       |> Sheet.record(roll, :sixes)
-      |> Sheet.total()
 
-    assert total == 15
+    assert Sheet.total(sheet) == 15
+    refute Sheet.completed?(sheet)
   end
 
   test "completing the upper section with 63 points" do
-    total =
+    sheet =
       %Sheet{}
-      |> Sheet.record(%Roll{dice: [1, 1, 1, 2, 3]}, :ones)
-      |> Sheet.record(%Roll{dice: [1, 2, 2, 2, 3]}, :twos)
-      |> Sheet.record(%Roll{dice: [1, 2, 3, 3, 3]}, :threes)
-      |> Sheet.record(%Roll{dice: [1, 2, 4, 4, 4]}, :fours)
-      |> Sheet.record(%Roll{dice: [1, 2, 5, 5, 5]}, :fives)
-      |> Sheet.record(%Roll{dice: [1, 2, 6, 6, 6]}, :sixes)
-      |> Sheet.total()
+      |> Sheet.record(%Roll{dice: [1, 1, 1, 2, 3], counter: 1}, :ones)
+      |> Sheet.record(%Roll{dice: [1, 2, 2, 2, 3], counter: 1}, :twos)
+      |> Sheet.record(%Roll{dice: [1, 2, 3, 3, 3], counter: 1}, :threes)
+      |> Sheet.record(%Roll{dice: [1, 2, 4, 4, 4], counter: 1}, :fours)
+      |> Sheet.record(%Roll{dice: [1, 2, 5, 5, 5], counter: 1}, :fives)
+      |> Sheet.record(%Roll{dice: [1, 2, 6, 6, 6], counter: 1}, :sixes)
 
-    assert total == 113
+    assert Sheet.total(sheet) == 113
+    refute Sheet.completed?(sheet)
   end
 
   test "completing the full sheet" do
-    roll = %Roll{dice: [1, 2, 3, 4, 5]}
+    roll = %Roll{dice: [1, 2, 3, 4, 5], counter: 1}
 
-    total =
+    sheet =
       %Sheet{}
       |> Sheet.record(roll, :ones)
       |> Sheet.record(roll, :twos)
@@ -93,17 +93,17 @@ defmodule Yatzy.SheetTest do
       |> Sheet.record(roll, :full_house)
       |> Sheet.record(roll, :chance)
       |> Sheet.record(roll, :yatzy)
-      |> Sheet.total()
 
-    assert total == 45
+    assert Sheet.total(sheet) == 45
+    assert Sheet.completed?(sheet)
   end
 
   test "completing the full sheet with bonus" do
-    roll = %Roll{dice: [1, 2, 3, 4, 5]}
-    fives = %Roll{dice: [5, 5, 5, 5, 5]}
-    sixes = %Roll{dice: [6, 6, 6, 6, 6]}
+    roll = %Roll{dice: [1, 2, 3, 4, 5], counter: 1}
+    fives = %Roll{dice: [5, 5, 5, 5, 5], counter: 1}
+    sixes = %Roll{dice: [6, 6, 6, 6, 6], counter: 1}
 
-    total =
+    sheet =
       %Sheet{}
       |> Sheet.record(roll, :ones)
       |> Sheet.record(roll, :twos)
@@ -120,16 +120,16 @@ defmodule Yatzy.SheetTest do
       |> Sheet.record(roll, :full_house)
       |> Sheet.record(roll, :chance)
       |> Sheet.record(roll, :yatzy)
-      |> Sheet.total()
 
-    assert total == 145
+    assert Sheet.total(sheet) == 145
+    assert Sheet.completed?(sheet)
   end
 
   test "completing the full sheet without bonus" do
-    roll = %Roll{dice: [1, 2, 3, 4, 5]}
-    fives = %Roll{dice: [5, 5, 5, 5, 5]}
+    roll = %Roll{dice: [1, 2, 3, 4, 5], counter: 1}
+    fives = %Roll{dice: [5, 5, 5, 5, 5], counter: 1}
 
-    total =
+    sheet =
       %Sheet{}
       |> Sheet.record(roll, :ones)
       |> Sheet.record(roll, :twos)
@@ -146,8 +146,8 @@ defmodule Yatzy.SheetTest do
       |> Sheet.record(roll, :full_house)
       |> Sheet.record(roll, :chance)
       |> Sheet.record(fives, :yatzy)
-      |> Sheet.total()
 
-    assert total == 95
+    assert Sheet.total(sheet) == 95
+    assert Sheet.completed?(sheet)
   end
 end

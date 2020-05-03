@@ -31,7 +31,7 @@ defmodule Yatzy.Sheet do
     field :fives, struct(), default: %Yatzy.Scoring.Fives{}
     field :sixes, struct(), default: %Yatzy.Scoring.Sixes{}
     field :one_pair, struct(), default: %Yatzy.Scoring.OnePair{}
-    field :two_pair, struct(), default: %Yatzy.Scoring.TwoPairs{}
+    field :two_pairs, struct(), default: %Yatzy.Scoring.TwoPairs{}
     field :three_of_a_kind, struct(), default: %Yatzy.Scoring.ThreeOfAKind{}
     field :four_of_a_kind, struct(), default: %Yatzy.Scoring.FourOfAKind{}
     field :small_straight, struct(), default: %Yatzy.Scoring.SmallStraight{}
@@ -74,6 +74,24 @@ defmodule Yatzy.Sheet do
     else
       sheet
     end
+  end
+
+  @doc """
+  Determine if the whole sheet has been filled out
+
+  ## Example
+
+      iex> Yatzy.Sheet.completed?(%Yatzy.Sheet{})
+      false
+
+  """
+  @spec completed?(sheet :: t()) :: boolean()
+  def completed?(sheet = %__MODULE__{}) do
+    sheet
+    |> Map.from_struct()
+    |> Enum.all?(fn {_rule, scoring} ->
+      scoring.roll.counter != 0 && scoring.roll.dice != []
+    end)
   end
 
   defp update_roll(score = %{roll: %Roll{dice: []}}, roll), do: %{score | roll: roll}
