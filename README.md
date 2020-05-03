@@ -5,7 +5,7 @@ An implementation of the Yatzy game.
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
+The package is [available in Hex](https://hex.pm/packages/yatzy), it can be installed
 by adding `yatzy` to your list of dependencies in `mix.exs`:
 
 ```elixir
