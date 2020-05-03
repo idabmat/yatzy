@@ -7,7 +7,7 @@ defmodule Yatzy.Scoring.Fives do
 
   defstruct roll: %Roll{},
             name: "Fives",
-            description: "The sum of all dice showind the number 5."
+            description: "The sum of all dice showing the number 5."
 
   defimpl Yatzy.Scoring.Score do
     def execute(%{roll: roll}), do: Yatzy.Scoring.count(roll.dice, 5)

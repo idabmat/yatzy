@@ -3,6 +3,16 @@ defmodule Yatzy.Scoring do
   Utility functions for calculating scores of a given roll.
   """
 
+  alias Yatzy.Roll
+  use TypedStruct
+
+  typedstruct do
+    field :roll, Roll.t(), default: %Roll{}
+    field :name, String.t(), enforce: true
+    field :description, String.t(), enforce: true
+    field :score, String.t()
+  end
+
   @doc """
   Counting how many dice show a given number and summing the matching dice
 
@@ -51,6 +61,10 @@ defmodule Yatzy.Scoring do
 
   defprotocol Score do
     @fallback_to_any true
+    @doc """
+    Calculate the score for a given scoring.
+    """
+    @spec execute(rule :: Yatzy.Scoring.t()) :: integer()
     def execute(_rule)
   end
 

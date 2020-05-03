@@ -26,7 +26,6 @@ defmodule Yatzy.Roll do
   @doc """
   Rolls the dice
   """
-
   @spec execute(roll :: t(), opts :: options()) :: t()
   def execute(roll, opts \\ []) do
     counter = roll.counter

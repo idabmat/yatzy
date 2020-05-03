@@ -1,5 +1,6 @@
 defmodule Yatzy.Sheet do
   alias Yatzy.Roll
+  alias Yatzy.Scoring
   alias Yatzy.Scoring.Score
 
   @moduledoc """
@@ -94,13 +95,16 @@ defmodule Yatzy.Sheet do
     end)
   end
 
+  @spec update_roll(score :: Scoring.t(), roll :: Roll.t()) :: Scoring.t()
   defp update_roll(score = %{roll: %Roll{dice: []}}, roll), do: %{score | roll: roll}
   defp update_roll(score, _), do: score
 
+  @spec valid_rule(sheet :: t(), rule :: atom()) :: boolean()
   defp valid_rule(sheet, rule) do
     sheet |> Map.from_struct() |> Map.keys() |> Enum.member?(rule)
   end
 
+  @spec section_total(sheet :: t(), [atom()]) :: integer()
   defp section_total(sheet = %__MODULE__{}, fields) do
     sheet
     |> Map.take(fields)
@@ -109,6 +113,7 @@ defmodule Yatzy.Sheet do
     |> Enum.sum()
   end
 
+  @spec upper_section_bonus(total :: integer()) :: integer()
   defp upper_section_bonus(total) when total >= @upper_section_bonus_limit,
     do: @upper_section_bonus_value
 

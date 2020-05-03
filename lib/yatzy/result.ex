@@ -4,14 +4,22 @@ defmodule Yatzy.Result do
   """
   use TypedStruct
 
+  alias Yatzy.Player
   alias Yatzy.Sheet
+
+  @type result_type :: :win | :draw
+  @type result_status :: :finished | :aborted
 
   typedstruct do
     field :winners, [String.t()]
-    field :type, :win | :draw, enforce: true
-    field :status, :finished | :aborted, enforce: true
+    field :type, result_type(), enforce: true
+    field :status, result_status(), enforce: true
   end
 
+  @doc """
+  Returns a new result struct based on the provided list of players
+  """
+  @spec new([Player.t()]) :: t()
   def new(players) do
     winners = winner_names(players)
     type = win_or_draw(winners)
@@ -20,9 +28,11 @@ defmodule Yatzy.Result do
     %__MODULE__{winners: winners, type: type, status: status}
   end
 
+  @spec win_or_draw([String.t()]) :: result_type()
   defp win_or_draw(winners) when length(winners) == 1, do: :win
   defp win_or_draw(_winners), do: :draw
 
+  @spec finished_or_aborted([Player.t()]) :: result_status()
   defp finished_or_aborted(players) do
     if Enum.all?(players, &Sheet.completed?(&1.sheet)) do
       :finished
@@ -31,6 +41,7 @@ defmodule Yatzy.Result do
     end
   end
 
+  @spec winner_names([Player.t()]) :: [String.t()]
   defp winner_names(players) do
     winner_names(Enum.map(players, &{&1.name, Sheet.total(&1.sheet)}), [])
     |> Enum.map(&elem(&1, 0))
