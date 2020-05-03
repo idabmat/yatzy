@@ -3,48 +3,38 @@ defmodule Yatzy do
   Documentation for `Yatzy`.
   """
 
+  @type roll_options :: [
+          reroll: [integer()]
+        ]
+
+  alias Yatzy.Game
+
   @doc """
   Starting a game
-
-  ## Examples
-
-      iex> Yatzy.new_game(["Alice", "Bob"])
-      %{}
-
   """
-  def new_game(_players), do: %{}
+  @spec new_game([String.t()]) :: {:ok, Game.t()} | {:error, String.t()}
+  def new_game(players) do
+    {:ok, Game.new(players)}
+  rescue
+    e in ArgumentError -> {:error, e.message}
+  end
 
   @doc """
-  Rolling the dices for a given player
-
-  ## Examples
-
-      iex> Yatzy.roll(%{}, "Alice")
-      %{}
-
+  (Re)Rolling the dices for a given player
   """
-  def roll(game_state, player), do: roll(game_state, player, [])
-  def roll(_game_state, _player, _opts), do: %{}
+  @spec roll(game_state :: Game.t(), player :: String.t(), roll_options :: roll_options()) ::
+          Game.t()
+  def roll(game_state, player, opts \\ []), do: Game.roll(game_state, player, opts)
 
   @doc """
   Scoring the current roll for a player
-
-  ## Examples
-
-      iex> Yatzy.score(%{}, "Alice", 1)
-      %{}
-
   """
-  def score(_game_state, _player, _rule), do: %{}
+  @spec save(game_state :: Game.t(), player :: String.t(), rule :: atom()) :: Game.t()
+  def save(game_state, player, rule), do: Game.save(game_state, player, rule)
 
   @doc """
   Ending a game
-
-  ## Examples
-
-      iex> Yatzy.end_game(%{})
-      %{ result: "Alice won." }
-
   """
-  def end_game(_game_state), do: %{result: "Alice won."}
+  @spec end_game(game_state :: Game.t()) :: Game.t()
+  def end_game(game_state), do: Game.finish(game_state)
 end

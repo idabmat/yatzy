@@ -1,6 +1,10 @@
 defmodule Yatzy.Game do
   @moduledoc """
-  Game module for creating, playing and ending a game.
+  Game module responsible for :
+
+  - starting a new game
+  - delegating player interactions based on game's turn
+  - finishing a game
   """
 
   use TypedStruct
